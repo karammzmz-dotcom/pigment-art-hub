@@ -1,0 +1,45 @@
+name: Extract PigmentArtHub zip
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download ZIP from GitHub
+        run: |
+          curl -L \
+            https://github.com/karammzmz-dotcom/pigment-art-hub/raw/main/PigmentArtHub.zip \
+            -o PigmentArtHub.zip
+
+      - name: Extract ZIP into repo root
+        run: |
+          mkdir -p extracted
+          unzip -o PigmentArtHub.zip -d extracted
+
+      - name: Copy extracted content into repo
+        run: |
+          cp -a extracted/. .
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit extracted files
+        run: |
+          git add .
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Extract PigmentArtHub archive"
+            git push
+          fi
