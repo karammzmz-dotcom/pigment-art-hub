@@ -1,0 +1,27 @@
+name: Unzip PigmentArtHub
+
+on:
+  workflow_dispatch:
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Unzip archive
+        run: |
+          mkdir -p extracted
+          unzip -o PigmentArtHub.zip -d extracted
+
+      - name: List extracted files
+        run: |
+          ls -R extracted
+
+      - name: Upload extracted folder as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pigment-art-hub-extracted
+          path: extracted/
